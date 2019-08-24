@@ -5,7 +5,11 @@ class Game
     {
 		this.boundRecursiveUpdate = this.update.bind(this);
         this.ctx = {};
-        this.player = new Player()
+        this.player = new Player();
+        this.platform1 = new Platform(50,50,600,20);
+        this.platform2 = new Platform(200,200,600,20);
+        this.platform3 = new Platform(100,100,600,20);
+        this.platform4 = new Platform(200,500,600,20);
         this.initCanvas();
     }
     initCanvas()
@@ -66,7 +70,10 @@ class Game
 	{
 		this.ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
         this.player.draw(this.ctx);
-		
-		
+        this.platform1.draw(this.ctx);
+        this.platform2.draw(this.ctx);
+        this.platform3.draw(this.ctx);
+        this.platform4.draw(this.ctx);
+
     }
 }
