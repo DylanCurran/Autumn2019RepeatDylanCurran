@@ -15,6 +15,7 @@ class Game
 		this.player = new Player();
 		this.mainMenu = new MainMenu();
 		this.hud = new Hud();
+		this.goal = new Goal();
 		this.platformSetup();
 		this.bananaSetup();
 		this.initCanvas();
@@ -91,7 +92,9 @@ class Game
 		window.requestAnimationFrame(this.boundRecursiveUpdate);
 		this.platformCollider();
 		this.bananaCollider();
+		this.goalCollider();
 		this.draw();
+		
         
 		
 	}
@@ -105,7 +108,8 @@ class Game
 			this.hud.HUDText(this.ctx,this.bananaCount);
 			if(this.bananaCount == this.TOTAL_BANANAS)
 			{
-				
+				this.goal.active = true;
+				this.goal.draw(this.ctx);
 			}
 			this.player.draw(this.ctx);
 		}
@@ -168,7 +172,7 @@ class Game
 		this.banana3 = new Banana(this.ctx, this.imageStuff3);
 
 		this.bananaArray = [this.banana1, this.banana2,this.banana3];
-
+		
 	}
 
 	bananaDraw()
@@ -208,6 +212,16 @@ class Game
 						}
 						console.log("colliding");
 					}
+			}
+	}
+
+	goalCollider()
+	{
+		if(this.player.x < this.goal.width + this.goal.x && this.player.x + this.player.width  > this.goal.x
+			&& this.player.y + this.player.height > this.goal.y && this.player.y  < this.goal.y + this.goal.height &&
+			this.goal.active)
+			{
+
 			}
 	}
 }
