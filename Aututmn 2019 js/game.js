@@ -9,18 +9,23 @@ class Game
 		this.animationDelay;
 		this.platformsArray;
 		this.bananaArray;
+		this.bananaCount;
+		this.TOTAL_BANANAS = 3;
 		this.atMainMenu = true;
 		this.player = new Player();
 		this.mainMenu = new MainMenu();
+		this.hud = new Hud();
 		this.platformSetup();
 		this.bananaSetup();
 		this.initCanvas();
+		
 
     }
     initCanvas()
     {
 		this.spriteCounter = 0;
 		this.animationDelay = 0;
+		this.bananaCount = 0;
         // Use the document object to create a new element canvas.
 	    var canvas = document.createElement("canvas");
 	    // Assign the canvas an id so we can reference it elsewhere.
@@ -68,7 +73,7 @@ class Game
 		console.log("space Pressed");
 		player.startGameFix();
 	 }
-	 if(e.keyCode == 13)
+	 if(e.keyCode == 13 && player.start)
 	 {
 		 player.colourChange();
 	 }
@@ -97,6 +102,11 @@ class Game
 		{
 			this.platformDraw();
 			this.bananaDraw();
+			this.hud.HUDText(this.ctx,this.bananaCount);
+			if(this.bananaCount == this.TOTAL_BANANAS)
+			{
+				
+			}
 			this.player.draw(this.ctx);
 		}
 		else{
@@ -191,6 +201,11 @@ class Game
 					this.player.y + this.player.height > this.bananaArray[i].y)
 					{
 						this.bananaArray[i].isActive = false;
+						if(!this.bananaArray[i].firstCollisonCheck)
+						{
+						this.bananaCount++;
+						this.bananaArray[i].firstCollisonCheck = true;
+						}
 						console.log("colliding");
 					}
 			}

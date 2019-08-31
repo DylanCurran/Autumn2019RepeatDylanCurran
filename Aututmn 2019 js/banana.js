@@ -15,6 +15,7 @@ class Banana
         this.image.src = imageOptions.image;
         this.image.style.opacity = imageOptions.opacity;
         this.isActive = true;
+        this.firstCollisonCheck = false;
     }
     update()
     {
