@@ -2,10 +2,10 @@ class Player
 {
     constructor()
     {
-        this.x = 20;
-        this.y = 20;
-        this.width = 150;
-        this.height = 150;
+        this.x = 0;
+        this.y = 125;
+        this.width = 50;
+        this.height = 50;
     }
 
     draw(ctx)
@@ -17,19 +17,25 @@ class Player
 
     moveUp()
     {
-        this.y -= 15;
+        this.y -= 5;
     }
     moveDown()
     {
-        this.y += 15;
+        this.y += 5;
     }
     moveLeft()
     {
-        this.x -= 15;
+        this.x -= 5;
     }
     moveRight()
     {
-        this.x += 15;
+        this.x += 5;
+    }
+
+    resetPosition()
+    {
+        this.x = 700;
+        this.y = 125;
     }
 
 }
