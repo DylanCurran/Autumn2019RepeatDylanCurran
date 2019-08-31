@@ -10,12 +10,14 @@ class Game
 		this.platformsArray;
 		this.bananaArray;
 		this.bananaCount;
+		this.lives;
 		this.TOTAL_BANANAS = 3;
 		this.atMainMenu = true;
 		this.player = new Player();
 		this.mainMenu = new MainMenu();
 		this.hud = new Hud();
 		this.goal = new Goal();
+		this.endScreen = new EndMenu();
 		this.platformSetup();
 		this.bananaSetup();
 		this.initCanvas();
@@ -27,6 +29,7 @@ class Game
 		this.spriteCounter = 0;
 		this.animationDelay = 0;
 		this.bananaCount = 0;
+		this.lives = 3;
         // Use the document object to create a new element canvas.
 	    var canvas = document.createElement("canvas");
 	    // Assign the canvas an id so we can reference it elsewhere.
@@ -69,14 +72,26 @@ class Game
 		
 		 player.moveDown();
 	 }
-	 if(e.keyCode == 32 )
+	 if(e.keyCode == 32 && player.start )
 	 {
 		console.log("space Pressed");
-		player.startGameFix();
+		player.start = false;
+	 }
+	 //restart game
+	 if(e.keyCode == 32 && player.end)
+	 {
+		 player.end = false;
+		 player.resetPosition();
 	 }
 	 if(e.keyCode == 13 && player.start)
 	 {
 		 player.colourChange();
+	 }
+	 //return to menu
+	 if(e.keyCode == 13 && player.end)
+	 {
+		player.start = true;
+		player.end = false;
 	 }
 	}
 	
@@ -84,11 +99,12 @@ class Game
 	
     update()
 	{
-		if(!this.player.getStart())
+		
+
+		if(this.lives == 0)
 		{
-			this.atMainMenu = false;
+			this.player.end = true;
 		}
-		//this.player.update(this.ctx);
 		window.requestAnimationFrame(this.boundRecursiveUpdate);
 		this.platformCollider();
 		this.bananaCollider();
@@ -101,11 +117,11 @@ class Game
 	draw()
 	{
 		this.ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-		if(!this.atMainMenu)
+		if(!this.player.start && this.player.end == false)
 		{
 			this.platformDraw();
 			this.bananaDraw();
-			this.hud.HUDText(this.ctx,this.bananaCount);
+			this.hud.HUDText(this.ctx,this.bananaCount,this.lives);
 			if(this.bananaCount == this.TOTAL_BANANAS)
 			{
 				this.goal.active = true;
@@ -113,8 +129,13 @@ class Game
 			}
 			this.player.draw(this.ctx);
 		}
-		else{
+		else if(this.player.start)
+		{
 			this.mainMenu.screenMenu(this.ctx);
+		}
+		else
+		{
+			this.endScreen.screenMenuEnd(this.ctx);
 		}
 
 	}
@@ -152,7 +173,7 @@ class Game
 				this.player.y + this.player.height > this.platformsArray[i].y)
 				{
 					this.player.resetPosition();
-					// throw game over here
+					this.lives--;
 				}
 			}
 			
@@ -221,7 +242,21 @@ class Game
 			&& this.player.y + this.player.height > this.goal.y && this.player.y  < this.goal.y + this.goal.height &&
 			this.goal.active)
 			{
-
+				this.player.end = true;
+				this.ResetGame();
 			}
+	}
+
+	ResetGame()
+	{
+		this.player.resetPosition();
+		this.lives = 3;
+		this.bananaCount = 0;
+		for(var i = 0; i < this.TOTAL_BANANAS; i++)
+		{
+			this.bananaArray[i].isActive = true;
+			this.bananaArray[i].firstCollisonCheck = false;
+		}	
+		this.goal.active = false;
 	}
 }

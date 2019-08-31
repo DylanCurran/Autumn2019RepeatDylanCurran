@@ -7,6 +7,7 @@ class Player
         this.width = 50;
         this.height = 50;
         this.start = true;
+        this.end = false;
         this.colourChanger = false;
     }
 
@@ -51,10 +52,7 @@ class Player
         this.start = false;
     }
 
-    getStart()
-    {
-        return this.start;
-    }
+  
 
     colourChange()
     {
