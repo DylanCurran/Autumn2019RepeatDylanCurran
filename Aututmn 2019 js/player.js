@@ -2,16 +2,24 @@ class Player
 {
     constructor()
     {
-        this.x = 0;
+        this.x = 700;
         this.y = 125;
         this.width = 50;
         this.height = 50;
+        this.start = true;
+        this.colourChanger = false;
     }
 
     draw(ctx)
     {
-        
-        ctx.fillStyle = "#FF0000";
+        if(this.colourChanger)
+        {
+            ctx.fillStyle = "#FFFF00";
+        }
+        else
+        {
+            ctx.fillStyle = "#FF0000";
+        }
         ctx.fillRect(this.x,this.y,this.width,this.height);
     }
 
@@ -36,6 +44,21 @@ class Player
     {
         this.x = 700;
         this.y = 125;
+    }
+
+    startGameFix()
+    {
+        this.start = false;
+    }
+
+    getStart()
+    {
+        return this.start;
+    }
+
+    colourChange()
+    {
+        this.colourChanger = true;
     }
 
 }

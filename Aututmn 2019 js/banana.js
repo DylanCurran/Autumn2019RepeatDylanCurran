@@ -14,6 +14,7 @@ class Banana
         this.ctx = canvas;
         this.image.src = imageOptions.image;
         this.image.style.opacity = imageOptions.opacity;
+        this.isActive = true;
     }
     update()
     {
@@ -22,10 +23,12 @@ class Banana
     draw(counter, canvas)
     {
       
-       
-        canvas.drawImage(this.image, this.xStart + counter * 45 ,this.yStart,
+       if(this.isActive)
+       {
+            canvas.drawImage(this.image, this.xStart + counter * 45 ,this.yStart,
             this.startWidth,this.startHeight,this.x,
             this.y, this.width, this.height);
+       }
             
             
     }

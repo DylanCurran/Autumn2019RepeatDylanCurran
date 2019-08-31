@@ -4,14 +4,18 @@ class Game
     constructor()
     {
 		this.boundRecursiveUpdate = this.update.bind(this);
-        this.ctx = {};
-		this.player = new Player();
-		this.platformSetup();
-		this.bananaSetup();
-		this.initCanvas();
+		this.ctx = {};
 		this.spriteCounter;
 		this.animationDelay;
 		this.platformsArray;
+		this.bananaArray;
+		this.atMainMenu = true;
+		this.player = new Player();
+		this.mainMenu = new MainMenu();
+		this.platformSetup();
+		this.bananaSetup();
+		this.initCanvas();
+
     }
     initCanvas()
     {
@@ -29,7 +33,7 @@ class Game
 		document.body.appendChild(canvas);	   
         console.log("Initialising game world")
         
-        document.addEventListener("keydown", this.keyDownHandler.bind(null,this.player));
+		document.addEventListener("keydown", this.keyDownHandler.bind(null,this.player));
 
     }
     keyDownHandler(player,e)
@@ -58,13 +62,30 @@ class Game
 	 {
 		
 		 player.moveDown();
-     }
-    }
+	 }
+	 if(e.keyCode == 32 )
+	 {
+		console.log("space Pressed");
+		player.startGameFix();
+	 }
+	 if(e.keyCode == 13)
+	 {
+		 player.colourChange();
+	 }
+	}
+	
+	  	
+	
     update()
 	{
+		if(!this.player.getStart())
+		{
+			this.atMainMenu = false;
+		}
 		//this.player.update(this.ctx);
 		window.requestAnimationFrame(this.boundRecursiveUpdate);
 		this.platformCollider();
+		this.bananaCollider();
 		this.draw();
         
 		
@@ -72,9 +93,15 @@ class Game
 	draw()
 	{
 		this.ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-		this.platformDraw();
-		this.bananaDraw();
-        this.player.draw(this.ctx);
+		if(!this.atMainMenu)
+		{
+			this.platformDraw();
+			this.bananaDraw();
+			this.player.draw(this.ctx);
+		}
+		else{
+			this.mainMenu.screenMenu(this.ctx);
+		}
 
 	}
 	
@@ -110,8 +137,8 @@ class Game
 				this.player.y < this.platformsArray[i].y + this.platformsArray[i].height &&
 				this.player.y + this.player.height > this.platformsArray[i].y)
 				{
-					console.log("colliding");
 					this.player.resetPosition();
+					// throw game over here
 				}
 			}
 			
@@ -120,15 +147,17 @@ class Game
 	bananaSetup()
 	{
 		this.imageStuff1 = {image: 'banana sprite sheet.png', xStart: 0, yStart: 0, startWidth: 45, startHeight:75,  
-		x: 300, y: 125,width: 60, height: 59 , opacity: 1};
+		x: 300, y: 125,width: 45, height: 75 , opacity: 1};
 		this.imageStuff2 = {image: 'banana sprite sheet.png', xStart: 0, yStart: 0, startWidth: 45, startHeight:75,  
-		x: 600, y: 425,width: 60, height: 59 , opacity: 1};
+		x: 600, y: 425,width: 45, height: 75 , opacity: 1};
 		this.imageStuff3 = {image: 'banana sprite sheet.png', xStart: 0, yStart: 0, startWidth: 45, startHeight:75,  
-		x: 225, y: 300,width: 60, height: 59 , opacity: 1};
+		x: 225, y: 300,width: 45, height: 75 , opacity: 1};
 
 		this.banana1 = new Banana(this.ctx, this.imageStuff1);
 		this.banana2 = new Banana(this.ctx, this.imageStuff2);
 		this.banana3 = new Banana(this.ctx, this.imageStuff3);
+
+		this.bananaArray = [this.banana1, this.banana2,this.banana3];
 
 	}
 
@@ -138,9 +167,10 @@ class Game
 		{
 			this.spriteCounter = 0;
 		}
-			this.banana1.draw(this.spriteCounter, this.ctx);
-			this.banana2.draw(this.spriteCounter, this.ctx);
-			this.banana3.draw(this.spriteCounter,this.ctx);
+			for(var i = 0; i < this.bananaArray.length; i++)
+			{
+				this.bananaArray[i].draw(this.spriteCounter, this.ctx);
+			}
 			this.animationDelay++;
 			if(this.animationDelay >= 5)
 			{
@@ -149,5 +179,20 @@ class Game
 			}
 
 		
+	}
+
+	bananaCollider()
+	{
+		for(var i = 0; i < this.bananaArray.length; i++)
+			{
+				if(this.player.x < this.bananaArray[i].x + this.bananaArray[i].startWidth &&
+					this.player.x + this.player.width > this.bananaArray[i].x &&
+					this.player.y < this.bananaArray[i].y + this.bananaArray[i].startHeight &&
+					this.player.y + this.player.height > this.bananaArray[i].y)
+					{
+						this.bananaArray[i].isActive = false;
+						console.log("colliding");
+					}
+			}
 	}
 }
