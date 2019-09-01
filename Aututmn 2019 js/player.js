@@ -9,6 +9,7 @@ class Player
         this.start = true;
         this.end = false;
         this.tutorial = false;
+        this.hardMode = false;
         this.colourChanger = false;
     }
 

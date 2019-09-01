@@ -100,6 +100,7 @@ class Game
 		player.start = true;
 		player.end = false;
 		player.tutorial = false;
+		player.hardMode = false;
 	 }
 	 if(e.keyCode == 32 && player.start)
 	 {
@@ -110,6 +111,10 @@ class Game
 		 console.log("Keypress");
 		player.tutorial = true;
 		player.start = false;
+	 }
+	 if(e.keyCode == 72 && player.start)
+	 {
+		player.hardMode = true;
 	 }
 
 	}
@@ -134,9 +139,13 @@ class Game
 		this.ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
 		if(!this.player.start && this.player.end == false)
 		{
-			this.platformDraw();
+			if(!(this.goal.active && this.player.hardMode && !this.player.tutorial))
+			{
+				this.platformDraw();
+				this.hud.HUDText(this.ctx,this.bananaCount,this.lives,this.player.tutorial);
+			}
 			this.bananaDraw();
-			this.hud.HUDText(this.ctx,this.bananaCount,this.lives,this.player.tutorial);
+			
 			if(this.bananaCount == this.TOTAL_BANANAS)
 			{
 				this.goal.active = true;
