@@ -8,6 +8,7 @@ class Player
         this.height = 50;
         this.start = true;
         this.end = false;
+        this.tutorial = false;
         this.colourChanger = false;
     }
 

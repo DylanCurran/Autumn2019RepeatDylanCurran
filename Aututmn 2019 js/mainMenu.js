@@ -29,6 +29,7 @@ class MainMenu
         canvas.fillText("Welcome to the main Menu", 100, 100);
         canvas.fillText("Press Space to start the game", 100, 200);
         canvas.fillText("Press Enter to change player Colour", 100, 300);
+        canvas.fillText("Press t to start the tutorial", 100,400);
 		canvas.restore();
     }
 }

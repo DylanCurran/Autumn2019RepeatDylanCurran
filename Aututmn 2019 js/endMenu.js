@@ -31,4 +31,16 @@ class EndMenu
         canvas.fillText("Press Enter to return to main menu", 100, 300);
 		canvas.restore();
     }
+
+    tutorialEnd(canvas)
+    {
+        canvas.save();
+		canvas.fillStyle= "#FFFFFF";
+		canvas.font = "italic 40pt Calibri";
+        canvas.textBaseLine = "top";
+        canvas.fillText("Tutorial Over", 100, 100);
+        canvas.fillText("Press Space to start the game", 100, 200);
+        canvas.fillText("Press Enter to return to main menu", 100, 300);
+		canvas.restore();
+    }
 }

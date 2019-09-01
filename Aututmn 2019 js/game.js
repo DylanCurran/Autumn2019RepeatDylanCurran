@@ -8,9 +8,13 @@ class Game
 		this.spriteCounter;
 		this.animationDelay;
 		this.platformsArray;
+		this.tutorialArray;
 		this.bananaArray;
 		this.bananaCount;
 		this.lives;
+		this.pickupSound;
+		this.soundBuffer;
+		this.audioCtx = new AudioContext();
 		this.TOTAL_BANANAS = 3;
 		this.atMainMenu = true;
 		this.player = new Player();
@@ -18,6 +22,7 @@ class Game
 		this.hud = new Hud();
 		this.goal = new Goal();
 		this.endScreen = new EndMenu();
+		//this.loadSound('pickup.ogg');
 		this.platformSetup();
 		this.bananaSetup();
 		this.initCanvas();
@@ -30,7 +35,6 @@ class Game
 		this.animationDelay = 0;
 		this.bananaCount = 0;
 		this.lives = 3;
-        // Use the document object to create a new element canvas.
 	    var canvas = document.createElement("canvas");
 	    // Assign the canvas an id so we can reference it elsewhere.
 	    canvas.id = 'mycanvas';
@@ -43,6 +47,9 @@ class Game
         console.log("Initialising game world")
         
 		document.addEventListener("keydown", this.keyDownHandler.bind(null,this.player));
+		canvas.addEventListener("touchstart", on_touch_start);
+    	canvas.addEventListener("touchend", on_touch_end);
+   		canvas.addEventListener("touchmove", on_touch_move.bind(null,this.ctx));
 
     }
     keyDownHandler(player,e)
@@ -74,14 +81,14 @@ class Game
 	 }
 	 if(e.keyCode == 32 && player.start )
 	 {
-		console.log("space Pressed");
 		player.start = false;
 	 }
 	 //restart game
 	 if(e.keyCode == 32 && player.end)
-	 {
-		 player.end = false;
+	 { 
 		 player.resetPosition();
+		 player.end = false;
+		 player.tutorial = false;
 	 }
 	 if(e.keyCode == 13 && player.start)
 	 {
@@ -92,15 +99,25 @@ class Game
 	 {
 		player.start = true;
 		player.end = false;
+		player.tutorial = false;
 	 }
+	 if(e.keyCode == 32 && player.start)
+	 {
+		 player.start = false;
+	 }
+	 if(e.keyCode == 84)
+	 {
+		 console.log("Keypress");
+		player.tutorial = true;
+		player.start = false;
+	 }
+
 	}
 	
 	  	
 	
     update()
 	{
-		
-
 		if(this.lives == 0)
 		{
 			this.player.end = true;
@@ -110,9 +127,7 @@ class Game
 		this.bananaCollider();
 		this.goalCollider();
 		this.draw();
-		
-        
-		
+
 	}
 	draw()
 	{
@@ -121,7 +136,7 @@ class Game
 		{
 			this.platformDraw();
 			this.bananaDraw();
-			this.hud.HUDText(this.ctx,this.bananaCount,this.lives);
+			this.hud.HUDText(this.ctx,this.bananaCount,this.lives,this.player.tutorial);
 			if(this.bananaCount == this.TOTAL_BANANAS)
 			{
 				this.goal.active = true;
@@ -135,11 +150,44 @@ class Game
 		}
 		else
 		{
-			this.endScreen.screenMenuEnd(this.ctx);
+			if(!this.player.tutorial)
+			{
+				this.endScreen.screenMenuEnd(this.ctx);
+			}
+			else
+			{
+				this.endScreen.tutorialEnd(this.ctx);
+			}
 		}
 
 	}
-	
+	/*
+	loadSound(url)
+	{
+		window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		var context = new AudioContext();
+		var request = new XMLHttpRequest();
+		request.open('GET', url, true);
+		request.responseType = 'arraybuffer';
+		request.onload = function() {
+			// request.response is encoded... so decode it now
+			context.decodeAudioData(request.response, function(buffer) {
+			  this.pickupSound = buffer;
+			}, function(err) {
+			  throw new Error(err);
+			});
+		  }
+		
+		  request.send();
+	}
+	playSound(sound)
+	{
+		const playSound = this.audioCtx.createBufferSource();
+		playSound.buffer = audio;
+		playSound.connect(this.audioCtx.destination);
+		playSound.start(this.audioCtx.currentTime);
+	}
+	*/
 	platformSetup()
 	{
 		this.platform1 = new Platform(200,100,600,20);
@@ -150,21 +198,39 @@ class Game
 		this.platform6 = new Platform(300,200,20,200);
 		this.platform7 = new Platform(800,100,20,120);
 		this.platform8 = new Platform(800,400,20,120);
+		this.platform9 = new Platform(200,100,600,20);
+		this.platform10 = new Platform(200,500,600,20);
+		this.platform11 = new Platform(200,100,20,400);
+		this.platform12 = new Platform(800,100,20,420);
 
-		this.platformsArray = [this.platform1, this.platform2, this.platform3, this.platform4, this.platform5, this.platform6, this.platform7, this.platform8];
+		this.platformsArray = [this.platform1, this.platform2, this.platform3, this.platform4, 
+			this.platform5, this.platform6, this.platform7, this.platform8];
+
+		this.tutorialArray = [this.platform9,this.platform10,this.platform11,this.platform12];
 	}
 
 	platformDraw()
 	{
-		for(var i = 0; i < this.platformsArray.length; i++)
+		if(!this.player.tutorial)
 		{
-			this.platformsArray[i].draw(this.ctx);
+			for(var i = 0; i < this.platformsArray.length; i++)
+			{
+				this.platformsArray[i].draw(this.ctx);
+			}
+		}
+		else{
+			for(var i = 0; i < this.tutorialArray.length; i++)
+			{
+				this.tutorialArray[i].draw(this.ctx);
+			}
 		}
 
 	}
 
 	platformCollider()
 	{
+		if(!this.player.tutorial)
+		{
 			for(var i = 0; i < this.platformsArray.length; i++)
 			{
 				if(this.player.x < this.platformsArray[i].x + this.platformsArray[i].width &&
@@ -176,6 +242,20 @@ class Game
 					this.lives--;
 				}
 			}
+		}
+		else{
+			for(var i = 0; i < this.tutorialArray.length; i++)
+			{
+				if(this.player.x < this.tutorialArray[i].x + this.tutorialArray[i].width &&
+					this.player.x + this.player.width > this.tutorialArray[i].x &&
+					this.player.y < this.tutorialArray[i].y + this.tutorialArray[i].height &&
+					this.player.y + this.player.height > this.tutorialArray[i].y)
+					{
+						this.player.resetPosition();
+						this.lives--;
+					}
+			}
+		}
 			
 	}
 
@@ -230,8 +310,8 @@ class Game
 						{
 						this.bananaCount++;
 						this.bananaArray[i].firstCollisonCheck = true;
+						//this.playSound(this.pickupSound);
 						}
-						console.log("colliding");
 					}
 			}
 	}
