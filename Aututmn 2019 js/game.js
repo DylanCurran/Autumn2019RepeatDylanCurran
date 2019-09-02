@@ -11,6 +11,7 @@ class Game
 		this.tutorialArray;
 		this.bananaArray;
 		this.bananaCount;
+		this.ws = new WebSocket("ws://localhost:8080/index.html");
 		this.lives;
 		this.pickupSound;
 		this.soundBuffer;
@@ -49,7 +50,10 @@ class Game
 		document.addEventListener("keydown", this.keyDownHandler.bind(null,this.player));
 		canvas.addEventListener("touchstart", on_touch_start);
     	canvas.addEventListener("touchend", on_touch_end);
-   		canvas.addEventListener("touchmove", on_touch_move.bind(null,this.ctx));
+		   canvas.addEventListener("touchmove", on_touch_move.bind(null,this.ctx));
+		   this.ws.onopen = function() {
+			this.ws.send("Game has begun");
+			};
 
     }
     keyDownHandler(player,e)
@@ -119,12 +123,17 @@ class Game
 
 	}
 	
-	  	
-	
     update()
 	{
-		if(this.lives == 0)
+		
+		//called when the client receives a message
+		this.ws.onmessage = function (evt) {
+			console.log("Event trigger");
+			alert(evt.data);
+			};
+		if(this.lives <= 0)
 		{
+			this.ResetGame();
 			this.player.end = true;
 		}
 		window.requestAnimationFrame(this.boundRecursiveUpdate);
@@ -139,6 +148,7 @@ class Game
 		this.ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
 		if(!this.player.start && this.player.end == false)
 		{
+			
 			if(!(this.goal.active && this.player.hardMode && !this.player.tutorial))
 			{
 				this.platformDraw();
@@ -170,6 +180,7 @@ class Game
 		}
 
 	}
+	
 	/*
 	loadSound(url)
 	{

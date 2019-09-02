@@ -13,8 +13,8 @@ class Hud
         canvas.textBaseLine = "top";
         if(!bool)
         {
-        canvas.fillText("Bananas Collected: " + count + "/3", 300, 350);
-        canvas.fillText("Lives left: " + lives + "/3", 300,300);
+        canvas.fillText("Bananas Collected: " + count + "/3", 350, 350);
+        canvas.fillText("Lives left: " + lives + "/3", 350,300);
         }
         else
         {

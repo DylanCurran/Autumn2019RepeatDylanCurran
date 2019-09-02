@@ -10,6 +10,5 @@ function main()
 		}
 	}, false);
 
-    game.draw();
     game.update();
 }
